@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PC Part Picker - Ultimate Builder</title>
+    <!-- Lucide Icons for nice visuals -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <h1><i data-lucide="monitor"></i> Build a PC Simulator 67</h1>
+        <p>Select a category to browse parts and build your dream machine.</p>
+        <div class="header-actions">
+            <button id="budget-btn" class="btn-primary"><i data-lucide="wallet"></i> Set Budget</button>
+        </div>
+    </header>
+
+    <main>
+        <!-- Left Side: Part Selection -->
+        <section id="part-selection-area">
+            <h2 id="section-title"><i data-lucide="grid"></i> Categories</h2>
+            
+            <!-- Back button appears when inside a category -->
+            <button id="back-to-categories" onclick="showCategories()">
+                <i data-lucide="arrow-left"></i> Back to Categories
+            </button>
+
+            <!-- 1. Categories View -->
+            <div id="category-grid" class="category-grid">
+                <!-- Injected by JS -->
+            </div>
+
+            <!-- 2. Parts List View (Initially Hidden) -->
+            <div id="parts-container" class="hidden">
+                <!-- Injected by JS -->
+            </div>
+        </section>
+
+        <!-- Right Side: Build Summary -->
+        <aside id="build-summary">
+            <h2><i data-lucide="shopping-cart"></i> Your Build</h2>
+            <div id="build-items">
+                <p style="text-align: center; color: #999; margin-top: 20px;">Your build is empty.<br>Select a category to start!</p>
+            </div>
+            
+            <div id="budget-tracker">
+                <!-- Wattage Display (Calculated by JS) -->
+                <div id="wattage-display" class="budget-line">
+                    <span>Est. Wattage:</span>
+                    <span>0W</span>
+                </div>
+                
+                <div class="budget-line">
+                    <span>Budget:</span>
+                    <span id="budget-total">₱0.00</span>
+                </div>
+                <div class="budget-line">
+                    <span>Total Cost:</span>
+                    <span id="build-total">₱0.00</span>
+                </div>
+                
+                <!-- Progress Bar -->
+                <div class="progress-container">
+                    <div id="budget-progress" class="progress-bar"></div>
+                </div>
+
+                <div class="budget-line total" style="margin-top: 10px;">
+                    <span>Remaining:</span>
+                    <span id="budget-remaining">₱0.00</span>
+                </div>
+            </div>
+
+            <button id="reset-btn" onclick="clearBuild()">Clear All</button>
+        </aside>
+    </main>
+
+    <!-- Toast Notification -->
+    <div id="toast">Item added!</div>
+
+    <script src="index.js"></script>
+</body>
+</html>
