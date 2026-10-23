@@ -59,10 +59,14 @@ const server = http.createServer((req, res) => {
   });
 });
 
-server.listen(PORT, '0.0.0.0', () => {
-  console.log(`\n==============================================`);
-  console.log(`🚀 PC Builder server is running!`);
-  console.log(`👉 Local:   http://localhost:${PORT}`);
-  console.log(`👉 Network: http://127.0.0.1:${PORT}`);
-  console.log(`==============================================\n`);
-});
+if (require.main === module) {
+  server.listen(PORT, '0.0.0.0', () => {
+    console.log(`\n==============================================`);
+    console.log(`🚀 PC Builder server is running!`);
+    console.log(`👉 Local:   http://localhost:${PORT}`);
+    console.log(`👉 Network: http://127.0.0.1:${PORT}`);
+    console.log(`==============================================\n`);
+  });
+}
+
+module.exports = server;
