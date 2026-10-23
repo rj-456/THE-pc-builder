@@ -104,12 +104,26 @@ let buildItems = []; // Array of full part objects
 let userBudget = 0;
 
 // --- INITIALIZATION ---
-document.addEventListener('DOMContentLoaded', () => {
+function initApp() {
     renderCategories();
     loadFromLocalStorage();
-    document.getElementById('budget-btn').addEventListener('click', setBudget);
+    const budgetBtn = document.getElementById('budget-btn');
+    if (budgetBtn) {
+        budgetBtn.addEventListener('click', openBudgetModal);
+    }
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            closeBudgetModal();
+        }
+    });
     lucide.createIcons();
-});
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initApp);
+} else {
+    initApp();
+}
 
 // --- CORE LOGIC: Compatibility & Adding ---
 function checkCompatibility(newItem) {
@@ -258,15 +272,99 @@ function showCategories() {
 }
 
 // --- BUDGET & WATTAGE LOGIC ---
-function setBudget() {
-    let input = prompt("Enter your total budget (PHP):", userBudget || "");
-    let parsed = parseFloat(input);
-    if (!isNaN(parsed) && parsed > 0) {
-        userBudget = parsed;
-        saveToLocalStorage();
-        showToast(`Budget set to ₱${userBudget.toLocaleString()}`);
-        updateSummary();
+function openBudgetModal() {
+    const modal = document.getElementById('budget-modal');
+    const input = document.getElementById('modal-budget-input');
+    if (!modal) return;
+    
+    // Pre-populate input with current budget if set
+    if (input) {
+        input.value = userBudget > 0 ? userBudget.toLocaleString() : '';
     }
+    
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+    
+    // Focus input
+    setTimeout(() => {
+        if (input) {
+            input.focus();
+            input.select();
+        }
+    }, 50);
+}
+
+function closeBudgetModal() {
+    const modal = document.getElementById('budget-modal');
+    if (!modal) return;
+    modal.classList.add('hidden');
+    document.body.style.overflow = '';
+}
+
+function handleModalBackdropClick(event) {
+    if (event.target.id === 'budget-modal') {
+        closeBudgetModal();
+    }
+}
+
+function parseBudgetValue(val) {
+    if (typeof val === 'number') return val;
+    if (!val) return 0;
+    
+    let clean = val.toString().trim().toLowerCase();
+    
+    // Support shorthand like "50k" or "75.5k"
+    if (clean.endsWith('k')) {
+        let num = parseFloat(clean.slice(0, -1).replace(/[^0-9.]/g, ''));
+        return isNaN(num) ? 0 : Math.round(num * 1000);
+    }
+    
+    // Strip PHP symbols, commas, and whitespace
+    clean = clean.replace(/[^0-9.]/g, '');
+    let num = parseFloat(clean);
+    return isNaN(num) ? 0 : Math.round(num);
+}
+
+function saveBudgetFromModal() {
+    const input = document.getElementById('modal-budget-input');
+    const val = parseBudgetValue(input ? input.value : '');
+    
+    if (val < 0) {
+        showToast("Budget cannot be negative", true);
+        return;
+    }
+    
+    userBudget = val;
+    saveToLocalStorage();
+    closeBudgetModal();
+    updateSummary();
+    
+    if (userBudget > 0) {
+        showToast(`Budget set to ₱${userBudget.toLocaleString()}`);
+    } else {
+        showToast("Budget reset to ₱0.00");
+    }
+}
+
+function clearBudgetFromModal() {
+    userBudget = 0;
+    saveToLocalStorage();
+    closeBudgetModal();
+    updateSummary();
+    showToast("Budget reset to ₱0.00");
+}
+
+function applyBudgetPreset(amount) {
+    const input = document.getElementById('modal-budget-input');
+    if (input) {
+        input.value = amount.toLocaleString();
+        input.focus();
+    }
+}
+
+// Backward-compatible alias
+function setBudget() {
+    openBudgetModal();
 }
 
 function updateSummary() {
@@ -352,6 +450,14 @@ function updateSummary() {
     } else {
         progressBar.style.width = "0%";
         remainingEl.style.color = "var(--text-main)";
+    }
+
+    // 6. Update Header Button Label
+    const budgetBtnText = document.getElementById('budget-btn-text');
+    if (budgetBtnText) {
+        budgetBtnText.textContent = userBudget > 0 
+            ? `Budget: ₱${userBudget.toLocaleString()}` 
+            : "Set Budget";
     }
 }
 

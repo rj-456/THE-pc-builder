@@ -14,7 +14,9 @@
         <h1><i data-lucide="monitor"></i> Build a PC Simulator 67</h1>
         <p>Select a category to browse parts and build your dream machine.</p>
         <div class="header-actions">
-            <button id="budget-btn" class="btn-primary"><i data-lucide="wallet"></i> Set Budget</button>
+            <button id="budget-btn" class="btn-primary" onclick="openBudgetModal()">
+                <i data-lucide="wallet"></i> <span id="budget-btn-text">Set Budget</span>
+            </button>
         </div>
     </header>
 
@@ -76,6 +78,47 @@
             <button id="reset-btn" onclick="clearBuild()">Clear All</button>
         </aside>
     </main>
+
+    <!-- Budget Modal -->
+    <div id="budget-modal" class="modal-overlay hidden" onclick="handleModalBackdropClick(event)">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <i data-lucide="wallet" class="modal-title-icon"></i>
+                    <h3>Set Build Budget</h3>
+                </div>
+                <button type="button" class="modal-close-btn" onclick="closeBudgetModal()" aria-label="Close modal">&times;</button>
+            </div>
+            
+            <p class="modal-desc">Enter your target budget to track your PC build costs in Philippine Pesos (₱).</p>
+            
+            <div class="budget-input-wrapper">
+                <span class="currency-symbol">₱</span>
+                <input 
+                    type="text" 
+                    id="modal-budget-input" 
+                    placeholder="e.g. 50,000" 
+                    autocomplete="off"
+                    onkeydown="if(event.key === 'Enter') saveBudgetFromModal()"
+                >
+            </div>
+
+            <div class="preset-label">Quick Presets:</div>
+            <div class="budget-presets">
+                <button type="button" class="preset-chip" onclick="applyBudgetPreset(30000)"><span>₱30,000</span> <small>Starter</small></button>
+                <button type="button" class="preset-chip" onclick="applyBudgetPreset(50000)"><span>₱50,000</span> <small>Mid-Tier</small></button>
+                <button type="button" class="preset-chip" onclick="applyBudgetPreset(80000)"><span>₱80,000</span> <small>High-End</small></button>
+                <button type="button" class="preset-chip" onclick="applyBudgetPreset(120000)"><span>₱120,000</span> <small>Enthusiast</small></button>
+            </div>
+
+            <div class="modal-actions">
+                <button type="button" class="btn-secondary" onclick="clearBudgetFromModal()">Reset to ₱0</button>
+                <button type="button" class="btn-primary modal-save-btn" onclick="saveBudgetFromModal()">
+                    <i data-lucide="check"></i> Save Budget
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- Toast Notification -->
     <div id="toast">Item added!</div>
